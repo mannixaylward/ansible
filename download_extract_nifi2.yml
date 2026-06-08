@@ -1,0 +1,32 @@
+---
+- name: Download and Extract Apache NiFi 2
+  hosts: all
+  become: true
+  vars:
+    # Stable NiFi 2 release version
+    nifi_version: "2.9.0"
+    # FIXED: Added the explicit forward slash after .org/
+    nifi_download_url: "https://dlcdn.apache.org/nifi/2.9.0/nifi-2.9.0-bin.zip"
+    nifi_install_dir: "/opt"
+    nifi_download_dir: "/tmp"
+
+  tasks:
+    - name: Ensure required packages are installed
+      ansible.builtin.package:
+        name: unzip
+        state: present
+
+    - name: Download Apache NiFi 2 binary archive
+      ansible.builtin.get_url:
+        url: "{{ nifi_download_url }}"
+        dest: "{{ nifi_download_dir }}/nifi-{{ nifi_version }}-bin.zip"
+        mode: '0644'
+        timeout: 60
+        force: true
+
+    - name: Extract NiFi archive to install directory
+      ansible.builtin.unarchive:
+        src: "{{ nifi_download_dir }}/nifi-{{ nifi_version }}-bin.zip"
+        dest: "{{ nifi_install_dir }}"
+        remote_src: true
+        creates: "{{ nifi_install_dir }}/nifi-{{ nifi_version }}"
