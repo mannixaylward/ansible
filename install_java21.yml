@@ -1,0 +1,14 @@
+---
+
+- name: Install Java 21 on Ubuntu
+  hosts: all
+  become: true
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install OpenJDK 21
+      ansible.builtin.apt:
+        name: openjdk-21-jdk
+        state: present
